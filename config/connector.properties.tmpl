@@ -1,22 +1,65 @@
+# Unique identifier for this EDC participant/connector instance
 edc.participant.id=${PARTICIPANT_ID}
+
+# IDS-specific identifier (typically same as participant ID)
 edc.ids.id=${PARTICIPANT_ID}
+
+# Hostname where the connector is accessible
 edc.hostname=${PARTICIPANT_HOSTNAME}
+
+# Port for the main API endpoint
 web.http.port=${EDC_CONNECTOR_API_PORT}
+
+# Base path for the main API endpoint
 web.http.path=/api
+
+# Port for management API operations (e.g., asset/policy management)
 web.http.management.port=${EDC_CONNECTOR_MANAGEMENT_PORT}
+
+# Base path for management API operations
 web.http.management.path=/management
+
+# Port for protocol communications between connectors
 web.http.protocol.port=${EDC_CONNECTOR_PROTOCOL_PORT}
+
+# Base path for protocol communications
 web.http.protocol.path=/protocol
+
+# Port for public-facing APIs
 web.http.public.port=${EDC_CONNECTOR_PUBLIC_PORT}
+
+# Base path for public-facing APIs
 web.http.public.path=/public
+
+# Port for internal control operations
 web.http.control.port=${EDC_CONNECTOR_CONTROL_PORT}
+
+# Base path for control operations
 web.http.control.path=/control
+
+# Callback URL for DSP (Dataspace Protocol) communications
 edc.dsp.callback.address=http://${PARTICIPANT_HOSTNAME}:${EDC_CONNECTOR_PROTOCOL_PORT}/protocol
+
+# Endpoint where data can be pulled from (consumer backend)
 edc.receiver.http.endpoint=http://${PARTICIPANT_HOSTNAME}:${EDC_BACKEND_PORT}/pull
+
+# Endpoint for validating data plane tokens
 edc.dataplane.token.validation.endpoint=http://${PARTICIPANT_HOSTNAME}:${EDC_CONNECTOR_CONTROL_PORT}/control/token
+
+# Alias for the public key in the keystore
 edc.public.key.alias=publickey
+
+# Alias for the private key used to sign data plane tokens
 edc.transfer.dataplane.token.signer.privatekey.alias=${KEY_ALIAS}
+
+# Alias for the private key used to sign proxy tokens
 edc.transfer.proxy.token.signer.privatekey.alias=${KEY_ALIAS}
+
+# Alias for the public key used to verify proxy tokens
 edc.transfer.proxy.token.verifier.publickey.alias=publickey
+
+# API authentication key name/header
 edc.api.auth.key=${EDC_CONNECTOR_API_KEY_HEADER}
+
+# Alias for the API authentication key in the vault
 edc.api.auth.key.alias=apikey
