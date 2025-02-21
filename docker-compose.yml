@@ -31,8 +31,7 @@ services:
     image: rabbitmq:3.11-management
     restart: on-failure
     ports:
-      - 5672:5672
-      - 15672:15672
+      - ${RABBITMQ_PORT}:5672
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}

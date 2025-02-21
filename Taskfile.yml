@@ -8,7 +8,7 @@ vars:
 env:
   CERT_FOLDER: "{{.CERT_FOLDER}}"
 
-dotenv: [.env.default, .env]
+dotenv: [.env, .env.default]
 
 tasks:
   certs:
@@ -35,3 +35,12 @@ tasks:
       - task: certs
       - task: config
       - docker compose up -d --wait
+
+  clean:
+    desc: Stops the connector and its dependencies and removes all generated files and volumes
+    cmds:
+      - docker compose down -v
+      - cmd: rm -rf {{.CERT_FOLDER}}
+        ignore_error: true
+      - cmd: rm -f {{.ROOT_DIR}}/config/connector.properties
+        ignore_error: true
