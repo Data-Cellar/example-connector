@@ -1,0 +1,44 @@
+services:
+  connector:
+    image: agmangas/edc-connector:main
+    restart: on-failure
+    environment:
+      PROPERTIES_FILE_PATH: /etc/connector/connector.properties
+      KEYSTORE_PATH: /etc/connector/certs/cert.pfx
+      KEYSTORE_PASSWORD: ${KEY_PASSW}
+      API_AUTH_KEY: ${EDC_CONNECTOR_API_KEY}
+    volumes:
+      - ./config/connector.properties:/etc/connector/connector.properties
+      - ${CERT_FOLDER}:/etc/connector/certs
+    depends_on:
+      broker:
+        condition: service_healthy
+  backend:
+    image: agmangas/edc-connector:main
+    restart: on-failure
+    volumes:
+      - ${CERT_FOLDER}:/etc/connector/certs
+    environment:
+      EDC_RABBIT_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+      EDC_HTTP_API_PORT: ${EDC_BACKEND_PORT}
+    ports:
+      - ${EDC_BACKEND_PORT}:${EDC_BACKEND_PORT}
+    command: [run-http-backend]
+    depends_on:
+      broker:
+        condition: service_healthy
+  broker:
+    image: rabbitmq:3.11-management
+    restart: on-failure
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

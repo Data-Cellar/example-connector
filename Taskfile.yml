@@ -1,0 +1,37 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  CERT_FOLDER: "{{.ROOT_DIR}}/certs"
+
+env:
+  CERT_FOLDER: "{{.CERT_FOLDER}}"
+
+dotenv: [.env.default, .env]
+
+tasks:
+  certs:
+    desc: Generates certificates to identify the connector
+    env:
+      OUT_DIR: "{{.CERT_FOLDER}}"
+    cmds:
+      - mkdir -p {{.CERT_FOLDER}}
+      - "{{.ROOT_DIR}}/create-certs.sh"
+    status:
+      - test -f {{.CERT_FOLDER}}/*.pfx
+
+  config:
+    desc: Replace the environment variables in the connector properties file template
+    cmds:
+      - >
+        envsubst
+        < {{.ROOT_DIR}}/config/connector.properties.tmpl
+        > {{.ROOT_DIR}}/config/connector.properties
+
+  connector:
+    desc: Starts the connector and its dependencies
+    cmds:
+      - task: certs
+      - task: config
+      - docker compose up -d --wait
