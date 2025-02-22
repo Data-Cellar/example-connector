@@ -5,7 +5,6 @@ version: "3"
 vars:
   CERT_FOLDER: "{{.ROOT_DIR}}/certs"
   VIRTUALENV_FOLDER: "{{.ROOT_DIR}}/venv"
-  EDCPY_VERSION: "0.6.0"
 
 env:
   CERT_FOLDER: "{{.CERT_FOLDER}}"
@@ -14,18 +13,20 @@ dotenv: [.env, .env.default]
 
 tasks:
   clean:
-    desc: Stops the connector and its dependencies and removes all generated files and volumes
+    desc: Removes all generated files, Docker volumes, and stops running containers
     cmds:
       - docker compose down -v
       - cmd: rm -rf {{.CERT_FOLDER}}
         ignore_error: true
       - cmd: rm -f {{.ROOT_DIR}}/config/connector.properties
         ignore_error: true
+      - cmd: rm -f {{.ROOT_DIR}}/example/.env.example-script
+        ignore_error: true
       - cmd: rm -rf {{.VIRTUALENV_FOLDER}}
         ignore_error: true
 
   certs:
-    desc: Generates certificates to identify the connector
+    desc: Generates certificates and keystore for connector communication
     env:
       OUT_DIR: "{{.CERT_FOLDER}}"
     cmds:
@@ -35,42 +36,35 @@ tasks:
       - test -f {{.CERT_FOLDER}}/*.pfx
 
   config:
-    desc: Replace the environment variables in the connector properties file template
+    desc: Creates configuration files by replacing environment variables in templates
     cmds:
       - >
         envsubst
         < {{.ROOT_DIR}}/config/connector.properties.tmpl
         > {{.ROOT_DIR}}/config/connector.properties
+      - >
+        envsubst
+        < {{.ROOT_DIR}}/example/.env.example-script.tmpl
+        > {{.ROOT_DIR}}/example/.env.example-script
 
   connector:
-    desc: Starts the connector and its dependencies
+    desc: Initializes and starts the EDC connector and required dependencies in Docker containers
     cmds:
       - task: certs
       - task: config
       - docker compose up -d --wait
 
   virtualenv:
-    desc: Creates a Python virtual environment and installs the EDC Python client library
+    desc: Sets up an isolated Python environment with required EDC client dependencies
     cmds:
       - virtualenv {{.VIRTUALENV_FOLDER}}
-      - "{{.VIRTUALENV_FOLDER}}/bin/pip install -U edcpy=={{.EDCPY_VERSION}}"
+      - "{{.VIRTUALENV_FOLDER}}/bin/pip install -r {{.ROOT_DIR}}/example/requirements.txt"
     status:
       - test -d {{.VIRTUALENV_FOLDER}}
 
   example:
-    desc: Runs the example
+    desc: Executes the example data transfer script using the configured Python environment
     deps:
       - virtualenv
-    env:
-      EDC_CONNECTOR_HOST: "{{.PARTICIPANT_HOSTNAME}}"
-      EDC_CONNECTOR_CONNECTOR_ID: "{{.PARTICIPANT_ID}}"
-      EDC_CONNECTOR_PARTICIPANT_ID: "{{.PARTICIPANT_ID}}"
-      EDC_CONNECTOR_MANAGEMENT_PORT: "{{.EDC_CONNECTOR_MANAGEMENT_PORT}}"
-      EDC_CONNECTOR_PROTOCOL_PORT: "{{.EDC_CONNECTOR_PROTOCOL_PORT}}"
-      EDC_CONNECTOR_CONTROL_PORT: "{{.EDC_CONNECTOR_CONTROL_PORT}}"
-      EDC_CONNECTOR_PUBLIC_PORT: "{{.EDC_CONNECTOR_PUBLIC_PORT}}"
-      EDC_CONNECTOR_API_KEY: "{{.EDC_CONNECTOR_API_KEY}}"
-      EDC_CONNECTOR_API_KEY_HEADER: "{{.EDC_CONNECTOR_API_KEY_HEADER}}"
-      EDC_RABBIT_URL: "amqp://{{.RABBITMQ_DEFAULT_USER}}:{{.RABBITMQ_DEFAULT_PASS}}@localhost:{{.RABBITMQ_PORT}}"
     cmds:
-      - "{{.VIRTUALENV_FOLDER}}/bin/python {{.ROOT_DIR}}/example_pull.py"
+      - "{{.VIRTUALENV_FOLDER}}/bin/python {{.ROOT_DIR}}/example/example-pull.py"

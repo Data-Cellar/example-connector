@@ -4,6 +4,7 @@
 certs
 connector.properties
 .env
+.env.example-script
 
 ## Python
 #########

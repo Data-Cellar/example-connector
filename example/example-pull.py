@@ -4,11 +4,30 @@ import os
 import pprint
 
 import coloredlogs
-import environ
 import httpx
-from edcpy.config import AppConfig
+from dotenv import load_dotenv
 from edcpy.edc_api import ConnectorController
 from edcpy.messaging import HttpPullMessage, with_messaging_app
+
+# URL of the public protocol endpoint of the Data Cellar provider connector
+# that will be used as the counterparty in data transfers
+_DATA_CELLAR_PUBLIC_CONNECTOR_PROTOCOL_URL = (
+    "http://dcserver.fundacionctic.org:19194/protocol"
+)
+
+# Unique identifier of the Data Cellar provider connector that will be
+# used as the counterparty in data transfers
+_DATA_CELLAR_PUBLIC_CONNECTOR_ID = "datacellar-example-provider"
+
+# Asset ID of the Data Cellar provider connector's asset that will be
+# requested in the data transfer. This asset represents a GET endpoint.
+_DATA_CELLAR_PUBLIC_CONNECTOR_ASSET = "GET-consumption"
+
+# Load environment variables from .env.example-script file located in the same directory
+# as this script. These variables configure the EDC connector connection details like
+# host, ports, API keys, etc. This is a convention of the edcpy client library.
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(_SCRIPT_DIR, ".env.example-script"))
 
 _logger = logging.getLogger(__name__)
 
@@ -16,7 +35,6 @@ _logger = logging.getLogger(__name__)
 async def pull_handler(message: dict, queue: asyncio.Queue):
     """Put an HTTP Pull message received from the Rabbit broker into a queue."""
 
-    # Using type hints for the message argument seems to break in Python 3.8.
     message = HttpPullMessage(**message)
 
     _logger.info(
@@ -76,8 +94,10 @@ async def main(
     async def pull_handler_partial(message: dict):
         await pull_handler(message=message, queue=queue)
 
-    # Start the Rabbit broker and set the handler for the HTTP pull messages
-    # (EndpointDataReference) received on the Consumer Backend from the Provider.
+    # Start RabbitMQ broker and configure handler for HTTP pull messages from Provider
+    # These messages (EndpointDataReference) are received by the Consumer Backend
+    # For details on why we need a consumer backend and message broker, see:
+    # https://github.com/fundacionctic/connector-building-blocks/blob/main/docs/faqs.md
     async with with_messaging_app(http_pull_handler=pull_handler_partial):
         controller = ConnectorController()
 
@@ -95,8 +115,8 @@ if __name__ == "__main__":
 
     asyncio.run(
         main(
-            counter_party_protocol_url="http://dcserver.fundacionctic.org:19194/protocol",
-            counter_party_connector_id="datacellar-example-provider",
-            asset_query="GET-consumption",
+            counter_party_protocol_url=_DATA_CELLAR_PUBLIC_CONNECTOR_PROTOCOL_URL,
+            counter_party_connector_id=_DATA_CELLAR_PUBLIC_CONNECTOR_ID,
+            asset_query=_DATA_CELLAR_PUBLIC_CONNECTOR_ASSET,
         )
     )
