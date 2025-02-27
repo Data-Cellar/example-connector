@@ -5,7 +5,8 @@ version: "3"
 vars:
   CERT_FOLDER: "{{.ROOT_DIR}}/certs"
   VIRTUALENV_FOLDER: "{{.ROOT_DIR}}/venv"
-  COMPOSE_FILE: '{{ternary "docker-compose-proxy.yml" "docker-compose.yml" (eq .DEPLOY_REVERSE_PROXY "true")}}'
+  COMPOSE_FILE_NAME: '{{ternary "docker-compose-proxy.yml" "/docker-compose.yml" (eq .DEPLOY_REVERSE_PROXY "true")}}'
+  COMPOSE_FILE: "{{.ROOT_DIR}}/{{.COMPOSE_FILE_NAME}}"
 
 env:
   CERT_FOLDER: "{{.CERT_FOLDER}}"
@@ -25,7 +26,7 @@ tasks:
         ignore_error: true
       - cmd: rm -rf {{.VIRTUALENV_FOLDER}}
         ignore_error: true
-      - cd {{.ROOT_DIR}}/datasource && docker compose down -v
+      - docker compose -f {{.ROOT_DIR}}/docker-compose-datasource.yml down -v
 
   certs:
     desc: Generates certificates and keystore for connector communication
@@ -76,4 +77,4 @@ tasks:
     desc: Builds and starts the HTTP API data source in Docker
     dir: "{{.ROOT_DIR}}/datasource"
     cmds:
-      - docker compose up -d --build --wait
+      - docker compose -f {{.ROOT_DIR}}/docker-compose-datasource.yml up -d --build --wait
