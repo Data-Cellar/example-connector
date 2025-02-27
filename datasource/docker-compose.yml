@@ -1,0 +1,10 @@
+services:
+  api_datasource:
+    build: .
+    pull_policy: never
+    command: ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "9090"]
+    restart: on-failure
+    environment:
+      BACKEND_API_KEY: ${BACKEND_API_KEY:-}
+    ports:
+      - "${DATASOURCE_PORT}:9090"

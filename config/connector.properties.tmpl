@@ -63,3 +63,22 @@ edc.api.auth.key=${EDC_CONNECTOR_API_KEY_HEADER}
 
 # Alias for the API authentication key in the vault
 edc.api.auth.key.alias=apikey
+
+# Name of the HTTP header that should contain the API key when making requests to the data source API
+es.ctic.backend.auth.key.header=X-API-Key
+
+# Name of the environment variable that contains the expected API key secret value for data source authentication
+es.ctic.backend.auth.key.envvar=BACKEND_API_KEY
+
+# URL where the OpenAPI/Swagger specification document can be found for the backend API service
+# Uses host.docker.internal to access the host machine from within Docker containers
+eu.datacellar.openapi.url=http://${PARTICIPANT_HOSTNAME}:${DATASOURCE_PORT}/openapi.json
+
+# Enable OmegaX decoration of the OpenAPI specification
+eu.datacellar.omegax.decoration.enabled=true
+
+# Default creator name for OmegaX decoration
+eu.datacellar.omegax.decoration.default.creator.name=Data Cellar
+
+# Default publisher homepage for OmegaX decoration
+eu.datacellar.omegax.decoration.default.publisher.homepage=https://datacellarproject.eu/

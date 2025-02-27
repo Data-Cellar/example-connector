@@ -24,6 +24,7 @@ tasks:
         ignore_error: true
       - cmd: rm -rf {{.VIRTUALENV_FOLDER}}
         ignore_error: true
+      - cd {{.ROOT_DIR}}/datasource && docker compose down -v
 
   certs:
     desc: Generates certificates and keystore for connector communication
@@ -50,6 +51,7 @@ tasks:
   connector:
     desc: Initializes and starts the EDC connector and required dependencies in Docker containers
     cmds:
+      - task: datasource
       - task: certs
       - task: config
       - docker compose up -d --wait
@@ -68,3 +70,9 @@ tasks:
       - virtualenv
     cmds:
       - "{{.VIRTUALENV_FOLDER}}/bin/python {{.ROOT_DIR}}/example/example-pull.py"
+
+  datasource:
+    desc: Builds and starts the HTTP API data source in Docker
+    dir: "{{.ROOT_DIR}}/datasource"
+    cmds:
+      - docker compose up -d --build --wait
