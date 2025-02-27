@@ -5,6 +5,7 @@ version: "3"
 vars:
   CERT_FOLDER: "{{.ROOT_DIR}}/certs"
   VIRTUALENV_FOLDER: "{{.ROOT_DIR}}/venv"
+  COMPOSE_FILE: '{{ternary "docker-compose-proxy.yml" "docker-compose.yml" (eq .DEPLOY_REVERSE_PROXY "true")}}'
 
 env:
   CERT_FOLDER: "{{.CERT_FOLDER}}"
@@ -15,7 +16,7 @@ tasks:
   clean:
     desc: Removes all generated files, Docker volumes, and stops running containers
     cmds:
-      - docker compose down -v
+      - docker compose -f {{.COMPOSE_FILE}} down -v
       - cmd: rm -rf {{.CERT_FOLDER}}
         ignore_error: true
       - cmd: rm -f {{.ROOT_DIR}}/config/connector.properties
@@ -54,7 +55,7 @@ tasks:
       - task: datasource
       - task: certs
       - task: config
-      - docker compose up -d --wait
+      - docker compose -f {{.COMPOSE_FILE}} up -d --wait
 
   virtualenv:
     desc: Sets up an isolated Python environment with required EDC client dependencies

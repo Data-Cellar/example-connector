@@ -1,0 +1,25 @@
+include:
+  - docker-compose.yml
+services:
+  caddy:
+    image: caddy:2.7
+    restart: on-failure
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    cap_add:
+      - NET_ADMIN
+    environment:
+      CADDY_DEBUG: 1
+      PARTICIPANT_HOSTNAME: ${PARTICIPANT_HOSTNAME}
+      EDC_CONNECTOR_MANAGEMENT_PORT: ${EDC_CONNECTOR_MANAGEMENT_PORT}
+      EDC_CONNECTOR_CONTROL_PORT: ${EDC_CONNECTOR_CONTROL_PORT}
+      EDC_CONNECTOR_PROTOCOL_PORT: ${EDC_CONNECTOR_PROTOCOL_PORT}
+      EDC_CONNECTOR_PUBLIC_PORT: ${EDC_CONNECTOR_PUBLIC_PORT}
+    ports:
+      - 80:80
+      - 443:443
+volumes:
+  caddy_data: {}
+  caddy_config: {}

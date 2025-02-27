@@ -1,0 +1,32 @@
+{
+	key_type rsa2048
+	acme_ca https://acme-v02.api.letsencrypt.org/directory
+
+	cert_issuer acme {
+		preferred_chains {
+			root_common_name "ISRG Root X1"
+		}
+	}
+
+	log {
+		level debug
+	}
+}
+
+{$PARTICIPANT_HOSTNAME} {
+	handle /management* {
+		reverse_proxy connector:{$EDC_CONNECTOR_MANAGEMENT_PORT}
+	}
+
+	handle /control* {
+		reverse_proxy connector:{$EDC_CONNECTOR_CONTROL_PORT}
+	}
+
+	handle /protocol* {
+		reverse_proxy connector:{$EDC_CONNECTOR_PROTOCOL_PORT}
+	}
+
+	handle /public* {
+		reverse_proxy connector:{$EDC_CONNECTOR_PUBLIC_PORT}
+	}
+}
