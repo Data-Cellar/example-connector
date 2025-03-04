@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 import random
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import List
 
 import arrow
@@ -68,6 +68,13 @@ class ElectrictyConsumptionData(BaseModel):
     results: List[ElectricityConsumptionSample]
 
 
+class SystemStatus(BaseModel):
+    status: str
+    last_update: datetime
+    active_locations: List[str]
+    system_load: float
+
+
 @app.post(
     "/consumption/prediction",
     tags=["Electricity consumption"],
@@ -75,9 +82,7 @@ class ElectrictyConsumptionData(BaseModel):
 async def run_consumption_prediction(
     api_key: APIKeyAuthDep, body: ElectricityConsumptionPredictionRequest
 ) -> ElectrictyConsumptionData:
-    """Run the ML model for prediction of electricity consumption for the given time period.
-    This is a mock implementation that generates random values for demonstration purposes.
-    """
+    """Run the ML model for prediction of electricity consumption for the given time period."""
 
     await asyncio.sleep(random.random())
 
@@ -103,9 +108,7 @@ async def run_consumption_prediction(
 async def get_consumption_data(
     api_key: APIKeyAuthDep, location: str = "Asturias", day: date = None
 ) -> ElectrictyConsumptionData:
-    """Fetch the historical time series of electricity consumption for a given day.
-    This is a mock implementation that generates random values for demonstration purposes.
-    """
+    """Fetch the historical time series of electricity consumption for a given day."""
 
     await asyncio.sleep(random.random())
 
@@ -119,6 +122,21 @@ async def get_consumption_data(
     ]
 
     return ElectrictyConsumptionData(location=location, results=results)
+
+
+@app.get("/system/health", tags=["System"], response_model=SystemStatus)
+async def get_system_health(api_key: APIKeyAuthDep) -> SystemStatus:
+    """Get the health status of the electricity monitoring system."""
+
+    return SystemStatus(
+        status="operational",
+        last_update=datetime.now(timezone.utc),
+        active_locations=random.sample(
+            ["Bimenes", "Oviedo", "Gijón", "Avilés", "Mieres"],
+            random.randint(1, 3),
+        ),
+        system_load=random.uniform(0.1, 0.9),
+    )
 
 
 @app.middleware("http")

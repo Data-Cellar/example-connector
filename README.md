@@ -5,7 +5,7 @@ This repository contains a simple example of how to:
 1. Deploy a Data Cellar connector
 2. Run an example data transfer between this connector and a public Data Cellar provider connector
 
-The public Data Cellar connector is deployed at `dcserver.fundacionctic.org` and is used as the counterparty in the data transfer. This connector does not implement any identity extension - it uses the mock identity extension of the EDC framework. The data exposed by the provider connector is synthetically generated and can therefore be manipulated without privacy concerns.
+The public Data Cellar connector is deployed at `dcserver.fundacionctic.org` and is used as the counterparty in the data transfer. This connector does not implement any identity extension - it uses the mock identity extension of the EDC framework. The data exposed by this public connector is synthetically generated and can therefore be manipulated without privacy concerns.
 
 ## Prerequisites
 
@@ -32,8 +32,9 @@ task connector
 This command sets up a complete Data Cellar consumer connector environment by performing several steps:
 
 1. It generates the necessary certificates and keystore for the connector.
-2. It creates configuration files by substituting environment variables in the templates.
-3. It launches three Docker containers: the main EDC connector service, a _consumer backend_ service, and a RabbitMQ message broker.
+2. It deploys an HTTP API that generates random values to simulate a mock data source
+3. It creates configuration files by substituting environment variables in the templates.
+4. It launches three Docker containers: the main EDC connector service, a _consumer backend_ service, and a RabbitMQ message broker.
 
 > [!NOTE]
 > The _consumer backend_ service is an HTTP server that receives the `EndpointDataReference` from the provider connector. [See the EDC samples repository for more information](https://github.com/eclipse-edc/Samples/blob/90c18cb9c1a0ecc09a6df273ce961f234a3c6153/transfer/transfer-02-consumer-pull/README.md).

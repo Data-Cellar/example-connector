@@ -58,6 +58,11 @@ tasks:
       - task: config
       - docker compose -f {{.COMPOSE_FILE}} up -d --wait
 
+  connector-restart:
+    desc: Restarts the EDC connector and required dependencies in Docker containers
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} restart connector
+
   virtualenv:
     desc: Sets up an isolated Python environment with required EDC client dependencies
     cmds:
