@@ -2,8 +2,8 @@
 
 This repository contains a simple example of how to:
 
-1. Deploy a Data Cellar consumer connector
-2. Run an example data transfer between the consumer connector and a public Data Cellar provider connector
+1. Deploy a Data Cellar connector
+2. Run an example data transfer between this connector and a public Data Cellar provider connector
 
 The public Data Cellar connector is deployed at `dcserver.fundacionctic.org` and is used as the counterparty in the data transfer. This connector does not implement any identity extension - it uses the mock identity extension of the EDC framework. The data exposed by the provider connector is synthetically generated and can therefore be manipulated without privacy concerns.
 
