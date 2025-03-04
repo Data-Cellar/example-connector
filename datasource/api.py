@@ -75,6 +75,14 @@ class SystemStatus(BaseModel):
     system_load: float
 
 
+class DailyPeaks(BaseModel):
+    location: str
+    date: date
+    morning_peak: int
+    evening_peak: int
+    peak_hours: dict[str, int]
+
+
 @app.post(
     "/consumption/prediction",
     tags=["Electricity consumption"],
@@ -136,6 +144,25 @@ async def get_system_health(api_key: APIKeyAuthDep) -> SystemStatus:
             random.randint(1, 3),
         ),
         system_load=random.uniform(0.1, 0.9),
+    )
+
+
+@app.get(
+    "/consumption/peaks",
+    tags=["Electricity consumption"],
+    response_model=DailyPeaks,
+)
+async def get_consumption_peaks(
+    api_key: APIKeyAuthDep, location: str = "Gijón", target_date: date = None
+) -> DailyPeaks:
+    """Get the peak consumption values for morning and evening periods."""
+
+    return DailyPeaks(
+        location=location,
+        date=target_date if target_date else date.today(),
+        morning_peak=random.randint(75, 100),
+        evening_peak=random.randint(80, 100),
+        peak_hours={"morning": 9, "evening": 20},
     )
 
 
