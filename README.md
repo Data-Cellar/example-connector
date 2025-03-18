@@ -23,6 +23,13 @@ This deployment is publicly available at the following endpoints for testing and
 | Control API                | `http://dcserver.fundacionctic.org:19192/control` |
 | Control API (SSL)          | `https://dcserver.fundacionctic.org/control` |
 
+The IDs of this public demo connector are the following:
+
+```properties
+edc.participant.id=datacellar-example-provider
+edc.ids.id=datacellar-example-provider
+```
+
 ## Prerequisites
 
 - **Docker and Docker Compose**: Required to run the connector and its dependencies
