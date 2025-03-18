@@ -2,10 +2,24 @@
 
 This repository contains a simple example of how to:
 
-1. Deploy a Data Cellar connector
-2. Run an example data transfer between this connector and a public Data Cellar provider connector
+* Deploy a Data Cellar connector that exposes the API endpoints of an HTTP API in the backend—the data from this API is randomly generated and does not pose any privacy concerns.
+* Run an example data transfer where this connector acts as a consumer of another counterparty's Data Cellar provider connector.
 
-The public Data Cellar connector is deployed at `dcserver.fundacionctic.org` and is used as the counterparty in the data transfer. This connector does not implement any identity extension - it uses the mock identity extension of the EDC framework. The data exposed by this public connector is synthetically generated and can therefore be manipulated without privacy concerns.
+This deployment is publicly available at the following endpoints for testing and demonstration purposes in the context of interoperability efforts between the energy data spaces sister projects.
+
+> [!TIP]
+> The connector endpoints are exposed both via HTTP, with each API (e.g., Protocol, Management) on a different port, and via a Caddy proxy that terminates the SSL connection, as seen in the `Caddyfile` in this repository.
+
+| Endpoint | URL |
+|----------------------------|---------------------------------------------------------------|
+| Management API             | `http://dcserver.fundacionctic.org:19193/management` |
+| Management API (SSL)       | `https://dcserver.fundacionctic.org/management` |
+| Protocol API               | `http://dcserver.fundacionctic.org:19194/protocol` |
+| Protocol API (SSL)         | `https://dcserver.fundacionctic.org/protocol` |
+| Public API                 | `http://dcserver.fundacionctic.org:19195/public` |
+| Public API (SSL)           | `https://dcserver.fundacionctic.org/public` |
+| Control API                | `http://dcserver.fundacionctic.org:19192/control` |
+| Control API (SSL)          | `https://dcserver.fundacionctic.org/control` |
 
 ## Prerequisites
 
