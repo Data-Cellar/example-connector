@@ -5,6 +5,8 @@ This repository contains a simple example of how to:
 * Deploy a Data Cellar connector that exposes the API endpoints of an HTTP API in the backend—the data from this API is randomly generated and does not pose any privacy concerns.
 * Run an example data transfer where this connector acts as a consumer of another counterparty's Data Cellar provider connector.
 
+## Public Demo Connector
+
 This deployment is publicly available at the following endpoints for testing and demonstration purposes in the context of interoperability efforts between the energy data spaces sister projects.
 
 > [!TIP]
