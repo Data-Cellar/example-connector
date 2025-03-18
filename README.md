@@ -71,6 +71,9 @@ Then, run the example script to transfer data from the provider connector to the
 task example
 ```
 
+> [!TIP]
+> Please note that the example script executed by the `example` task is available in [`example/example-pull.py`](example/example-pull.py). Also, note that the Protocol URL and connector ID of the counterparty are hardcoded at the top of the file to the values of the public demo connector.
+
 This will create a Python virtual environment and install the `edcpy` dependency, which is a client library developed by Data Cellar to simplify interactions with the Management API of the EDC connector. While not strictly necessary (you can always send requests directly to the Management API), `edcpy` provides a convenient way to interact with the connector.
 
 Then, the script executes a complete data transfer flow by running `example-pull.py`: it negotiates with the provider connector, initiates a transfer request, and pulls data from the provider's API endpoint. The script outputs detailed logs showing each step of the negotiation, transfer, and data retrieval process.
