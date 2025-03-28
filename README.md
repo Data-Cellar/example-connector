@@ -7,6 +7,9 @@ This repository contains a simple example of how to:
 
 ## Public Demo Connector
 
+> [!NOTE]  
+> The public demo of the connector has been taken down following the completion of System Use Case (SUC) tests in the energy data spaces cluster. If you need a Data Cellar connector for testing, you can deploy this repository on your own infrastructure or contact us, and we’ll do our best to provide access.
+
 This deployment is publicly available at the following endpoints for testing and demonstration purposes in the context of interoperability efforts between the energy data spaces sister projects.
 
 > [!TIP]
